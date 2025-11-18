@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
+import csv
 #I am using arrays so simplicity
 FA_list=[]
 SA_list=[]
 FA_weight=[]
 SA_weight=[]
+Ovarall_category=[]
 Overall_assign=[]
 Overall_weight=[]
 overall_grades=[]
 FA_weight_count=0
 SA_weight_count=0
 weight_count=0 
-
+# List containing dictionary of assignment details
+Transcript_details=[]
 class Validation:
     def __init__(self, input):
         self.input = input
@@ -19,6 +22,7 @@ class Validation:
             print("\n------------Error!-----------\nInput can not be empty. Please try again.\n")
             return True
         return False
+    
     def range_validation(self):
         try:
             value = int(self.input)
@@ -29,6 +33,25 @@ class Validation:
         except ValueError:
             print("Invalid Input")
             return True
+    def csv_preparation(self):
+        csv_file='grades.csv'
+        Grade_Transcript=[]
+        for g in range(len(Overall_assign)):
+            grade= overall_grades[g]
+            subject= Overall_assign[g]
+            weight= Overall_weight[g]
+            category= Ovarall_category[g]
+            Grade_Transcript.append({"Assignment": subject,
+                                    "Category": category,
+                                     "Grades": grade,
+                                     "Weight": weight})
+        Ass_names = ["Assignment","Category", "Grades", "Weight"]
+        with open(csv_file, mode='w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=Ass_names)
+            writer.writeheader()
+            writer.writerows(Grade_Transcript)
+
+        print(f"Data successfully saved to {csv_file}")
     def resubmissions(self):
         Failed_subjects=[]
         for g in range(len(Overall_assign)):
@@ -82,10 +105,6 @@ class Validation:
         else:
             message += "Resubmission:    None\n"
         print (message)
-        print(Overall_weight)
-        print(Overall_assign)
-        print(overall_grades)
-
     def category_validation(self):
         """This is a method tha
         """
@@ -136,6 +155,7 @@ while True:
             # print(AssiName.category_validation())
             continue
         category = AssiCategory.category_validation()
+        Ovarall_category.append(category)
         Overall_assign.append(name)
         break
 
@@ -235,5 +255,7 @@ while True:
             print("Invalid input. Please enter 'y' or 'n'.")
             continue
 
-Final_message=Validation("None")
+Final_message=Validation("")
 Final_message.GPA_generator()
+#Saving them to csv file
+Final_message.csv_preparation()
