@@ -152,7 +152,6 @@ while True:
                 continue
         if  not AssiCategory.category_validation():
             print('-----------Invalid input-----------\n Please enter FA for Formative or "SA" for summartive.\n')
-            # print(AssiName.category_validation())
             continue
         category = AssiCategory.category_validation()
         Ovarall_category.append(category)
