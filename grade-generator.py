@@ -108,11 +108,11 @@ class Validation:
             Status= "Pass"
         else:
             Status= "Fail"
-        message = "-------------------------------------------------"
-        message = "\n   --------RESULTS---------\n"
+        message = "--------------------------------"
+        message = "\n   ---- RESULTS ---\n"
         message += f"   Total Formative: {Total_FA}/{Total_FA_Weight}\n"
         message += f"   Total Summative: {Total_SA}/{Total_SA_Weight}\n"
-        message += "    -------------------------\n"
+        message += "    ----------------\n"
         message +=  f"  Total Grade:     {((Total_grades/Total_Weight)*100):.2f}/100\n"
         message += f"   GPA:             {((Total_grades/Total_Weight)*5.0):.2f}\n"
         message += f"   Status:          {Status}\n"
@@ -121,7 +121,7 @@ class Validation:
             message += f"   Resubmission:    {resub}\n"
         else:
             message += "    Resubmission:    None\n"
-        message += "-------------------------------------------------\n"
+        message += "---------------------------------\n"
         print (message)
     def category_validation(self):
         """This is a method tha
@@ -181,7 +181,7 @@ while True:
             continue
         if not AssiCategory.category_validation():
             print("--------------------------------------\n")
-            print('************ Invalid input **************\n Please enter FA for Formative or "SA" for summartive.\n')
+            print('************ Invalid input **************\nPlease enter FA for Formative or "SA" for summartive.\n')
             print("--------------------------------------")
             continue
         category = AssiCategory.category_validation()
@@ -276,13 +276,13 @@ while True:
                     continue
 
             print(f"""
--------------------------------------------------------------------------
-                            RESULTS
---------------------------------------------------------------------------
+----------------------------------------------------------
+                      RESULTS
+-----------------------------------------------------------
 | {'ASSIGNMENT':<15} | {'CATEGORY':<10} | {'GRADES':<10} | {'WEIGHT':<8} |
 --------------------------------------------------------------------------
 | {name:<15} | {category:<10} | {grades:<10} | {weight:<8} |
---------------------------------------------------------------------------
+-----------------------------------------------------------
 """)
             print("\n--------------------------------------------------------------")
             print("Assignment added successfully. All details have been recorded.")
