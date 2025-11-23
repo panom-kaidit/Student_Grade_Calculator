@@ -3,6 +3,8 @@ import csv
 #I am using arrays so simplicity
 FA_list=[]
 SA_list=[]
+FA_Categ=[]
+FA_assName=[]
 FA_weight=[]
 SA_weight=[]
 Ovarall_category=[]
@@ -19,7 +21,9 @@ class Validation:
         self.input = input
     def check_if_empty(self):
         if not self.input.strip():
-            print("\n------------Error!-----------\nInput can not be empty. Please try again.\n")
+            print("-------------------------------------------")
+            print("\n***************** Error! ******************\nInput can not be empty. Please try again.\n")
+            print("-------------------------------------------")
             return True
         return False
     
@@ -27,11 +31,15 @@ class Validation:
         try:
             value = int(self.input)
             if  value not in range(0,101):
-                print('------Error!------\n Not in in range ')
+                print("--------------------------------------\n")
+                print('**************** Error! ****************\n       Not in in range      ')
+                print("\n--------------------------------------")
                 return True
             return False
         except ValueError:
-            print("Invalid Input")
+            print("--------------------------------------\n")
+            print("------------ Invalid Input -------------")
+            print("\n--------------------------------------")
             return True
     def csv_preparation(self):
         csv_file='grades.csv'
@@ -50,14 +58,15 @@ class Validation:
             writer = csv.DictWriter(file, fieldnames=Ass_names)
             writer.writeheader()
             writer.writerows(Grade_Transcript)
-
-        print(f"Data successfully saved to {csv_file}")
+        print("--------------------------------------\n")
+        print(f"    Data successfully saved to {csv_file}")
+        print("\n--------------------------------------")
     def resubmissions(self):
         Failed_subjects=[]
-        for g in range(len(Overall_assign)):
-            grade= overall_grades[g]
-            subject= Overall_assign[g]
-            weight= Overall_weight[g]
+        for g in range(len(FA_assName)):
+            grade= FA_list[g]
+            subject= FA_assName[g]
+            weight= FA_weight[g]
             if grade < 50:
                 Failed_subjects.append(
                     {"Assignment": subject,
@@ -85,25 +94,28 @@ class Validation:
         SA_Pass_Mark= (Total_SA/Total_SA_Weight)*100
         Status=None
         if Total_FA_Weight == 0 or Total_SA_Weight == 0:
-            print("Error: Missing assignment!")
+            print("\n--------------------------------------\n")
+            print("************ Error!*********************\n       Missing assignment!     ")
+            print("\n--------------------------------------")
             return
         if FA_Pass_Mark >= 50 and SA_Pass_Mark >= 50:
             Status= "Pass"
         else:
             Status= "Fail"
-
-        message = "--------RESULTS---------\n"
-        message += f"Total Formative: {Total_FA}/{Total_FA_Weight}\n"
-        message += f"Total Summative: {Total_SA}/{Total_SA_Weight}\n"
-        message += "-------------------------\n"
-        message +=  f"Total Grade:    {(Total_grades/Total_Weight)*100}/100\n"
-        message += f"GPA:             {((Total_grades/Total_Weight))*5.0}\n"
-        message += f"Status:          {Status}\n"
+        message = "-------------------------------------------------"
+        message = "\n   --------RESULTS---------\n"
+        message += f"   Total Formative: {Total_FA}/{Total_FA_Weight}\n"
+        message += f"   Total Summative: {Total_SA}/{Total_SA_Weight}\n"
+        message += "    -------------------------\n"
+        message +=  f"  Total Grade:     {(Total_grades/Total_Weight)*100}/100\n"
+        message += f"   GPA:             {((Total_grades/Total_Weight)*5.0):.2f}\n"
+        message += f"   Status:          {Status}\n"
         resub = Final_message.resubmissions()
         if resub:
-            message += f"Resubmission:    {resub}\n"
+            message += f"   Resubmission:    {resub}\n"
         else:
-            message += "Resubmission:    None\n"
+            message += "    Resubmission:    None\n"
+        message += "-------------------------------------------------\n"
         print (message)
     def category_validation(self):
         """This is a method tha
@@ -130,28 +142,41 @@ class Logic:
         if self.category == "SA":
             SA_weight.append(self.weight)
             SA_list.append(weightedGrade)
-        # # else:
-        # return ('-----------Invalid input-----------\n Please enter FA" for Formative or "SA" for summartive.\n')
 
+def welcome_message():
+    print("""
+===========================================
+WELCOME TO THE STUDENT GRADE CALCULATOR
+===========================================
+Please follow the instructions provided'
+""")
 while True:
-    name = input("Please Enter Assignment Name: ")
+    welcome_message()
+    name = input("Enter the assignment name: ")
     AssiName= Validation(name)
     if AssiName.check_if_empty():
         continue
+
     while True:
-        category =input('Enter Category \n("FA" for Formative, "SA" for Summative): ')
+        category = input('Enter Category ("FA" for Formative, "SA" for Summative): ')
         AssiCategory=Validation(category)
         if category.lower() == "fa" and FA_weight_count == 60:
-            print("You cannot add more Formatives. You have already added all the Formative assignments.")
+            print("--------------------------------------\n")
+            print("All Formative assignments have already been added.\n Please choose a different category.")
+            print("--------------------------------------")
             continue
         if category.lower() =="sa" and SA_weight_count == 40:
-            print("You cannot add more Summatives. You have already added all the Summative assignments.")
+            print("\n--------------------------------------\n")
+            print("All Summative assignments have already been added.\n Please choose a different category.")
+            print("\n--------------------------------------")
             continue
         if AssiCategory.check_if_empty():
-                print(AssiCategory.check_if_empty())
-                continue
-        if  not AssiCategory.category_validation():
-            print('-----------Invalid input-----------\n Please enter FA for Formative or "SA" for summartive.\n')
+            print(AssiCategory.check_if_empty())
+            continue
+        if not AssiCategory.category_validation():
+            print("--------------------------------------\n")
+            print('************ Invalid input **************\n Please enter FA for Formative or "SA" for summartive.\n')
+            print("--------------------------------------")
             continue
         category = AssiCategory.category_validation()
         Ovarall_category.append(category)
@@ -162,7 +187,9 @@ while True:
         grades = input("Enter grades obtained(0-100): ")
         GradesValidation = Validation(grades)
         if grades.isalpha():
-            print("wrong Input. Please try a number.")
+            print("--------------------------------------\n")
+            print(" wrong Input. Please try a number.")
+            print("\n--------------------------------------")
             continue
         if GradesValidation.check_if_empty():
             continue
@@ -176,82 +203,130 @@ while True:
         weight = input("Enter the Assignment weight: ")
         valid_weight = Validation(weight)
         if weight.isalpha():
-            print("wrong Input. Please try again.")
+            print("--------------------------------------\n")
+            print(" wrong Input. Please try again.")
+            print("\n--------------------------------------")
             continue
         if valid_weight.check_if_empty():
             continue
         weight=int(weight)
-        if weight_count + weight > 100 and  weight_count <= 100:
-            print("----------Error!-------------")
+        if weight_count + weight > 100 and weight_count <= 100:
+            print("--------------------------------------\n")
+            print("************ Error! ****************")
             print("Total weight cannot exceed 100!")
             print(f"Current FA total:  {FA_weight_count}\nCurent SA: {SA_weight_count}")
             print(f"Current total:     {weight_count}\nCurrent + This :", weight_count + weight)
             print(f"Remaining Weight:  {(100-weight_count)}")
+            print("\n--------------------------------------")
             continue
-        if category =="FA" or category =="SA":
-            if category=="FA":
-                if FA_weight_count ==60:
-                    print("You have sucessfully added all Formatives")
+        if category == "FA" or category == "SA":
+            if category == "FA":
+                if FA_weight_count == 60:
+                    print("--------------------------------------\n")
+                    print("You have successfully added all Formative assignments.\n")
+                    print("--------------------------------------\n")
                 if FA_weight_count + weight <= 60:
+                    print("--------------------------------------\n")
                     print("Assignment successfully added.")
-                    print(f"Total FA weight: {FA_weight_count + weight}\n")
+                    print(f"Total FA weight: {FA_weight_count + weight}")
                     print(f"Remaining FA weight: {60 - (FA_weight_count + weight)}\n")
+                    print("--------------------------------------")
                     FA_weight_count += weight
+                    FA_assName.append(name)
+                    FA_weight.append(weight)
                     Overall_weight.append(weight)
                 elif FA_weight_count + weight > 60:
-                    print("Total FA weight can not exceed 60")
-                    print(f"Your recent FA weight: {FA_weight_count + weight}\nAdded FA weight: {(FA_weight_count + weight)-60}")
-                    print(f"Remaining Total FA weight: {60-FA_weight_count}")
-                    print("Please make sure Total FA weight Add up to 60.\n")
+                    print("--------------------------------------\n")
+                    print("Error: Total FA weight cannot exceed 60%.")
+                    print(f"Current Total (FA): {FA_weight_count + weight}")
+                    print(f"Excess Weight Added: {(FA_weight_count + weight) - 60}")
+                    print(f"Remaining FA weight: {60 - FA_weight_count}")
+                    print("Please ensure the total FA weight adds up to 60%.\n")
+                    print("--------------------------------------")
                     continue
-            if category=="SA":
-                if SA_weight_count ==40:
-                    print("You have sucessfully added all Summatives")
+            if category == "SA":
+                if SA_weight_count == 40:
+                    print("You have successfully added all Summative assignments.\n")
                 if SA_weight_count + weight <= 40:
+                    print("--------------------------------------\n")
                     print("Assignment successfully added.")
-                    print(f"Total SA weight: {SA_weight_count + weight}\n")
-                    print(f"Remaining SA weight: {40 - (SA_weight_count + weight)}\n")
+                    print(f"Total SA weight:        {SA_weight_count + weight}")
+                    print(f"Remaining SA weight:    {40 - (SA_weight_count + weight)}\n")
+                    print("--------------------------------------")
                     SA_weight_count += weight
                     Overall_weight.append(weight)
                 elif SA_weight_count + weight > 40:
-                    print("Total SA weight can not exceed 40")
-                    print(f"Your recent SA weight: {SA_weight_count + weight}\nAdded SA weight: {(SA_weight_count + weight)-40}")
-                    print(f"Remaining Total SA weight: {40-SA_weight_count}")
-                    print("Please make sure Total SA weight Add up to 40.\n")
+                    print("----------------------------------------------\n")
+                    print("Error: Total SA weight cannot exceed 40%.")
+                    print(f"Current Total (SA): {SA_weight_count + weight}")
+                    print(f"Excess Weight Added: {(SA_weight_count + weight) - 40}")
+                    print(f"Remaining SA weight: {40 - SA_weight_count}")
+                    print("Please ensure the total SA weight adds up to 40%.\n")
+                    print("------------------------------------------------")
                     continue
 
-        break
-    grade=Logic(grades,weight,category)
+            print(f"""
+-------------------------------------------------------------------------
+                            RESULTS
+--------------------------------------------------------------------------
+| {'ASSIGNMENT':<15} | {'CATEGORY':<10} | {'GRADES':<10} | {'WEIGHT':<8} |
+--------------------------------------------------------------------------
+| {name:<15} | {category:<10} | {grades:<10} | {weight:<8} |
+--------------------------------------------------------------------------
+""")
+            print("\n--------------------------------------------------------------")
+            print("Assignment added successfully. All details have been recorded.")
+            print("\n--------------------------------------------------------------")
+            break
+    grade = Logic(grades, weight, category)
     grade.weightedGrade()
+
     if FA_weight_count == 60 and SA_weight_count == 40:
         break
+
     while True:
-        choice = input("Do you want to add another assignment?(y/n): ")
-        if choice == "Y" or choice == "y":
+        choice = input("Do you want to add another assignment? (y/n) or (E) to Exit: ").strip().lower()
+        if choice == "y":
             break
-        elif choice == "N" or choice == "n":
-            if not FA_list or not SA_list :
+        elif choice =="e":
+            exit()
+        elif choice == "n":
+            if not FA_list or not SA_list:
                 if not FA_list:
-                    print("Formative  can not be empty")
-                    print(f"You have {60-FA_weight_count}% worth Of weight for FA(Formatives) Remaining.\n")
+                    print("--------------------------------------\n")
+                    print("Formative assignments cannot be empty.")
+                    print(f"Remaining FA weight: {60 - FA_weight_count}%\n")
+                    print("--------------------------------------")
                     continue
                 if not SA_list:
-                    print("Summatives can not be empty")
-                    print(f"You have {40-SA_weight_count}% worth Of weight for SA(Summatives)\n")
+                    print("--------------------------------------\n")
+                    print("Summative assignments cannot be empty.")
+                    print(f"Remaining SA weight: {40 - SA_weight_count}%\n")
+                    print("--------------------------------------")
                     continue
             if SA_weight_count != 40 or FA_weight_count != 60:
                 if FA_weight_count < 60:
-                    print("Formative weight must add up to 60%")
-                    print(f"Current fA: {FA_weight_count}\nRemaining FA weight: {60-FA_weight_count}")
+                    print("--------------------------------------\n")
+                    print("Formative weight must total 60%.")
+                    print(f"Current FA weight: {FA_weight_count}")
+                    print(f"Remaining FA weight: {60 - FA_weight_count}\n")
+                    print("--------------------------------------")
                     continue
                 if SA_weight_count < 40:
-                    print("Summatives weight must add up to 40%")
-                    print(f"Current SA: {SA_weight_count}\nRemaining SA weight: {40-SA_weight_count}\n")
-                    print("Please make sure to add SUmmartive assignment.")
+                    print("--------------------------------------\n")
+                    print("Summative weight must total 40%.")
+                    print(f"Current SA weight: {SA_weight_count}")
+                    print(f"Remaining SA weight: {40 - SA_weight_count}\n")
+                    print("Please be sure to add Summative assignments.")
+                    print("\n--------------------------------------")
                     continue
+            
             break
+
         else:
-            print("Invalid input. Please enter 'y' or 'n'.")
+            print("--------------------------------------\n")
+            print("Invalid input. Please enter 'y' or 'n'.\n")
+            print("--------------------------------------")
             continue
 
 Final_message=Validation("")

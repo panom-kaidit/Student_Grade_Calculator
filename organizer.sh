@@ -13,9 +13,9 @@ if [ ! -f "${csv_file[0]}" ]; then
     exit 
 fi
 
-for file in *.csv; do
+for file in $csv_file; do
     timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
-    new_filename="$file-${timestamp}.csv"
+    new_filename="grade-${timestamp}.csv"
 
     {
         echo "Archiving Details: $file"
@@ -24,7 +24,7 @@ for file in *.csv; do
         echo "Content:"
         cat "$file"
         echo ""
-    } >> "organizer.log"
+    } >> "$LOG_FILE"
 
     mv "$file" "$DIRECTORY/$new_filename"
 done
