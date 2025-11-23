@@ -5,6 +5,7 @@ FA_list=[]
 SA_list=[]
 FA_Categ=[]
 FA_assName=[]
+FA_grade=[]
 FA_weight=[]
 SA_weight=[]
 Ovarall_category=[]
@@ -62,27 +63,32 @@ class Validation:
         print(f"    Data successfully saved to {csv_file}")
         print("\n--------------------------------------")
     def resubmissions(self):
-        Failed_subjects=[]
+        Failed_subjects = []
         for g in range(len(FA_assName)):
-            grade= FA_list[g]
-            subject= FA_assName[g]
-            weight= FA_weight[g]
+            grade = FA_grade[g]
+            subject = FA_assName[g]
+            weight = FA_weight[g]
+
             if grade < 50:
-                Failed_subjects.append(
-                    {"Assignment": subject,
+                Failed_subjects.append({
+                    "Assignment": subject,
                     "Grades": grade,
-                    "Weight": weight})
-        
-        resubmission_list=[]
-        highest_weight=0
-        for items in Failed_subjects:
-            if items["Weight"] > highest_weight:
-                highest_weight=items["Weight"]
-        for items in Failed_subjects:
-            if items["Weight"] == highest_weight:
-                resubmission_list.append(items["Assignment"])
+                    "Weight": weight
+                })
+
+        resubmission_list = []
+        highest_weight = 0
+
+        for item in Failed_subjects:
+            if item["Weight"] > highest_weight:
+                highest_weight = item["Weight"]
+
+        for item in Failed_subjects:
+            if item["Weight"] == highest_weight:
+                resubmission_list.append(item["Assignment"])
 
         return ",".join(resubmission_list)
+
     def GPA_generator(self):
         Total_FA=sum(FA_list)
         Total_SA=sum(SA_list)
@@ -107,7 +113,7 @@ class Validation:
         message += f"   Total Formative: {Total_FA}/{Total_FA_Weight}\n"
         message += f"   Total Summative: {Total_SA}/{Total_SA_Weight}\n"
         message += "    -------------------------\n"
-        message +=  f"  Total Grade:     {(Total_grades/Total_Weight)*100}/100\n"
+        message +=  f"  Total Grade:     {((Total_grades/Total_Weight)*100):.2f}/100\n"
         message += f"   GPA:             {((Total_grades/Total_Weight)*5.0):.2f}\n"
         message += f"   Status:          {Status}\n"
         resub = Final_message.resubmissions()
@@ -136,7 +142,7 @@ class Logic:
         percentage = self.input/100
         weightedGrade = percentage*self.weight
         if self.category == "FA":
-            FA_weight.append(self.weight)
+            # FA_weight.append(self.weight)
             FA_list.append(weightedGrade)
 
         if self.category == "SA":
@@ -195,7 +201,7 @@ while True:
             continue
         if GradesValidation.range_validation():
             continue
-        grades = int(grades)
+        grades = float(grades)
         overall_grades.append(grades)
         break
 
@@ -208,6 +214,9 @@ while True:
             print("\n--------------------------------------")
             continue
         if valid_weight.check_if_empty():
+            continue
+        if "." in weight:
+            print("Decimal weights are not allowed. Enter a whole number.")
             continue
         weight=int(weight)
         if weight_count + weight > 100 and weight_count <= 100:
@@ -235,6 +244,7 @@ while True:
                     FA_assName.append(name)
                     FA_weight.append(weight)
                     Overall_weight.append(weight)
+                    FA_grade.append(grades)
                 elif FA_weight_count + weight > 60:
                     print("--------------------------------------\n")
                     print("Error: Total FA weight cannot exceed 60%.")
